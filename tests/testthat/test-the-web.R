@@ -17,6 +17,17 @@ test_that("loc_permalink_from_lccn() works", {
 
   expect_error(loc_permalink_from_lccn(123456789),
                "Input must be a character string")
+
+  expect_equal(loc_permalink_from_lccn("73167510", format="marcxml"),
+               "https://lccn.loc.gov/73167510/marcxml")
+  expect_equal(loc_permalink_from_lccn("73167510", format="mods"),
+               "https://lccn.loc.gov/73167510/mods")
+  expect_equal(loc_permalink_from_lccn("73167510", format="mads"),
+               "https://lccn.loc.gov/73167510/mads")
+  expect_equal(loc_permalink_from_lccn("73167510", format="dublin"),
+               "https://lccn.loc.gov/73167510/dc")
+  expect_error(loc_permalink_from_lccn("73167510", format="nonsense"),
+               'format must be one of "", "marcxml", "mods", "mads", or "dublin"')
 })
 
 
@@ -59,11 +70,25 @@ test_that("worldcat_permalink_from_oclc_number() works", {
                                                      "1005106045")),
                c("http://www.worldcat.org/oclc/1049727704", NA,
                  "http://www.worldcat.org/oclc/1005106045"))
-
+  expect_equal(worldcat_permalink_from_oclc_number("733889
+  7"), "http://www.worldcat.org/oclc/7338897")
   expect_error(worldcat_permalink_from_oclc_number(123456789),
                "Input must be a character string")
 })
 
 
-
+# oclc_classify_link_from_standard_num
+test_that("oclc_classify_link_from_standard_num() works", {
+  expect_equal(oclc_classify_link_from_standard_num("629725006"),
+               "http://classify.oclc.org/classify2/ClassifyDemo?search-standnum-txt=629725006&startRec=0")
+  expect_equal(oclc_classify_link_from_standard_num(c("039333712X", NA, "629725006")),
+               c("http://classify.oclc.org/classify2/ClassifyDemo?search-standnum-txt=039333712X&startRec=0",
+                 NA, "http://classify.oclc.org/classify2/ClassifyDemo?search-standnum-txt=629725006&startRec=0"))
+  expect_equal(oclc_classify_link_from_standard_num("733889
+  7"), "http://classify.oclc.org/classify2/ClassifyDemo?search-standnum-txt=7338897&startRec=0")
+  expect_equal(oclc_classify_link_from_standard_num(NA),
+               NA_character_)
+  expect_error(oclc_classify_link_from_standard_num(1),
+               "Input must be a character string")
+})
 
