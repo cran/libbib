@@ -6,11 +6,9 @@ worldcat_api_get_http_response <- function(aurl, print.api.responses=FALSE){
   status <- req$status_code
   # make more cases
   if(status!=200)
-    stop("API returned non-OK status code")
+    stop("API returned non-OK status code ", status)
   if(print.api.responses){
-    cat("\n\nHTTP response:\n")
-    print(req$status_code)
-    cat("End of HTTP response\n\n")
+    message("\nHTTP response status code: ", req$status_code)
   }
   resp <- list(content=rawToChar(req$content),
                http_status_code=req$status_code)
@@ -18,13 +16,14 @@ worldcat_api_get_http_response <- function(aurl, print.api.responses=FALSE){
 }
 
 
+# --------------------------------------------------------------- #
 
 ####################################
 ###         CLASSIFY API         ###
 ####################################
 
 # un-exported internal helper function
-worldcat_api_classify <- function(thetype, thenumber, print.api.responses=FALSE){
+worldcat_api_classify <- function(thetype, thenumber, debug=FALSE){
   if(length(thenumber)>1) stop("only accepts one standard number at a time")
   if(is.na(thenumber)) return(NULL)
   if(class(thenumber)!="character")
@@ -32,13 +31,13 @@ worldcat_api_classify <- function(thetype, thenumber, print.api.responses=FALSE)
 
   template      <- "http://classify.oclc.org/classify2/Classify?%s=%s&summary=true"
   api_response  <- worldcat_api_get_http_response(sprintf(template, thetype, thenumber),
-                                                  print.api.responses=print.api.responses)
+                                                  print.api.responses=debug)
   content       <- api_response$content
 
-  if(print.api.responses){
-    cat("\n\nClassify API response:\n")
-    cat(content)
-    cat("\nEnd of Classify API response\n\n")
+  if(debug){
+    message("\nClassify API response:")
+    message(content, appendLF=FALSE)
+    message("End of Classify API response\n")
   }
 
   http_status_code  <- api_response$http_status_code
@@ -141,9 +140,9 @@ worldcat_api_classify <- function(thetype, thenumber, print.api.responses=FALSE)
 #'
 #' @param x A string representation of the standard number that the function
 #'          chosen accepts.
-#' @param print.api.responses A logical indicating whether the HTTP and
-#'                            classify API responses should be printed
-#'                            (for debugging) (default is \code{FALSE})
+#' @param debug A logical indicating whether the HTTP and classify API
+#'              responses should be printed (for debugging)
+#'              (default is \code{FALSE})
 #'
 #' @return A \code{data.table} with most popular DCC and LCC call numbers
 #'         and various other metadata. See "Details" for more information.
@@ -168,20 +167,20 @@ worldcat_api_classify <- function(thetype, thenumber, print.api.responses=FALSE)
 
 #' @rdname worldcat_api_classify_by
 #' @export
-worldcat_api_classify_by_oclc <- function(x, print.api.responses=FALSE){
-  worldcat_api_classify("oclc", x, print.api.responses=print.api.responses)
+worldcat_api_classify_by_oclc <- function(x, debug=FALSE){
+  worldcat_api_classify("oclc", x, debug=debug)
 }
 
 #' @rdname worldcat_api_classify_by
 #' @export
-worldcat_api_classify_by_isbn <- function(x, print.api.responses=FALSE){
-  worldcat_api_classify("isbn", x, print.api.responses=print.api.responses)
+worldcat_api_classify_by_isbn <- function(x, debug=FALSE){
+  worldcat_api_classify("isbn", x, debug=debug)
 }
 
 #' @rdname worldcat_api_classify_by
 #' @export
-worldcat_api_classify_by_issn <- function(x, print.api.responses=FALSE){
-  worldcat_api_classify("issn", x, print.api.responses=print.api.responses)
+worldcat_api_classify_by_issn <- function(x, debug=FALSE){
+  worldcat_api_classify("issn", x, debug=debug)
 }
 
 
@@ -236,7 +235,6 @@ read_a_marcxml_record <- function(exemel, more=FALSE){
     final <- cbind(final, li, oi)
     # all_fast_topical_terms <- xml2::xml_text(xml2::xml_find_all(exemel, TOPICALXPATH))
     # print(all_fast_topical_terms)
-    # uses original pub date
     setcolorder(final, c("oclc", "isbn", "issn", "title", "author", "pub_date",
                          "lang_code", "bib_level", "record_type",
                          "pub_place_code", "publisher", "leader", "oh08"))
@@ -248,7 +246,7 @@ read_a_marcxml_record <- function(exemel, more=FALSE){
 
 worldcat_api_bib_read_info_by_something <- function(x,
                                                     type_std_num="oclc",
-                                                    wskey=getOption("libbib.wskey", ""),
+                                                    wskey=getOption("libbib.wskey", NULL),
                                                     more=FALSE,
                                                     debug=FALSE){
   # error checking
@@ -258,6 +256,8 @@ worldcat_api_bib_read_info_by_something <- function(x,
     stop("x must be a string or NULL")
   if(!(type_std_num %chin% c("oclc", "isbn", "issn")))
     stop('type of standard number must be "oclc", "isbn", or "issn"')
+  if(is.null(wskey))
+    stop("a WSKEY (WorldCat API key) must be specified")
 
 
   template <- "http://www.worldcat.org/webservices/catalog/content/%s%s?wskey=%s"
@@ -268,15 +268,15 @@ worldcat_api_bib_read_info_by_something <- function(x,
                      x, wskey)
 
   if(debug)
-    cat(sprintf("\n\nfull api call url:\n%s\n\n", fullurl))
+    message("\nFull Bib Read API call url:\n", fullurl)
 
   resp <- worldcat_api_get_http_response(fullurl, print.api.responses=debug)
   content <- resp$content
 
   if(debug){
-    cat("\n\nBib Read API response:\n")
-    cat(content)
-    cat("\nEnd of Bib Read API response\n\n")
+    message("\nBib Read API response:")
+    message(content, appendLF=FALSE)
+    message("End of Bib Read API response\n")
   }
 
   exemel <- xml2::read_xml(content, options=NULL)
@@ -368,7 +368,7 @@ worldcat_api_bib_read_info_by_something <- function(x,
 #' @rdname worldcat_api_bib_read_info_by
 #' @export
 worldcat_api_bib_read_info_by_oclc <- function(x,
-                                               wskey=getOption("libbib.wskey", ""),
+                                               wskey=getOption("libbib.wskey", NULL),
                                                more=FALSE,
                                                debug=FALSE){
   # error checking
@@ -388,7 +388,7 @@ worldcat_api_bib_read_info_by_oclc <- function(x,
 #' @rdname worldcat_api_bib_read_info_by
 #' @export
 worldcat_api_bib_read_info_by_isbn <- function(x,
-                                               wskey=getOption("libbib.wskey", ""),
+                                               wskey=getOption("libbib.wskey", NULL),
                                                more=FALSE,
                                                debug=FALSE){
   # error checking
@@ -408,7 +408,7 @@ worldcat_api_bib_read_info_by_isbn <- function(x,
 #' @rdname worldcat_api_bib_read_info_by
 #' @export
 worldcat_api_bib_read_info_by_issn <- function(x,
-                                               wskey=getOption("libbib.wskey", ""),
+                                               wskey=getOption("libbib.wskey", NULL),
                                                more=FALSE,
                                                debug=FALSE){
   # error checking
@@ -443,7 +443,7 @@ construct_wcapiloc_url <- function(stdnum,
                                    frbrGrouping="on",
                                    libtype=NULL,
                                    start_at=1,
-                                   wskey=getOption("libbib.wskey", "")){
+                                   wskey=getOption("libbib.wskey", NULL)){
 
   # error checking
   if(class(stdnum)!="character")
@@ -464,6 +464,8 @@ construct_wcapiloc_url <- function(stdnum,
     stop('libtype must be either NULL, "academic", "public", "government", or "other"')
   if(class(start_at)!="numeric")
     stop("start_at must be a number")
+  if(is.null(wskey))
+    stop("a WSKEY (WorldCat API key) must be specified")
 
   building <- "http://www.worldcat.org/webservices/catalog/content/libraries/"
 
@@ -516,7 +518,7 @@ worldcat_api_locations_helper <- function(x,
                                           frbrGrouping="on",
                                           libtype=NULL,
                                           start_at=1,
-                                          wskey=getOption("libbib.wskey", ""),
+                                          wskey=getOption("libbib.wskey", NULL),
                                           debug=FALSE){
   fullurl <- construct_wcapiloc_url(x, type_std_num=type_std_num,
                                     location=location,
@@ -526,15 +528,15 @@ worldcat_api_locations_helper <- function(x,
                                     libtype=libtype, start_at=start_at,
                                     wskey=wskey)
   if(debug)
-    cat(sprintf("\n\nfull api call url:\n%s\n\n", fullurl))
+    message("\nFull Location API call url:\n", fullurl)
 
   resp <- worldcat_api_get_http_response(fullurl, print.api.responses=debug)
   content <- resp$content
 
   if(debug){
-    cat("\n\nLocation API response:\n")
-    cat(content)
-    cat("\nEnd of Location API response\n\n")
+    message("\nLocation API response:")
+    message(content, appendLF=FALSE)
+    message("End of Location API response\n")
   }
 
   exemel <- xml2::read_xml(content, options=NULL)
@@ -565,7 +567,7 @@ worldcat_api_locations_by_something <- function(x,
                                                servicelevel="full",
                                                frbrGrouping="on",
                                                libtype=NULL,
-                                               wskey=getOption("libbib.wskey", ""),
+                                               wskey=getOption("libbib.wskey", NULL),
                                                print.progress=TRUE,
                                                debug=FALSE){
   # error checking
@@ -598,6 +600,8 @@ worldcat_api_locations_by_something <- function(x,
 
   bibinfo <- NULL
   if(include.bib.info){
+    if(debug)
+      message("Bib info requested; also hitting the Bib Read Info API")
     bibinfo <- worldcat_api_bib_read_info_by_something(x,
                                                        type_std_num=type_std_num,
                                                        wskey=wskey,
@@ -617,8 +621,9 @@ worldcat_api_locations_by_something <- function(x,
 
   while(last_pull_n_count==100){
     starting_at <- 1+(100*counter)
-    cat(sprintf("request %s pulled %s rows... repeating, starting at library %s\n",
-                counter, last_pull_n_count, starting_at))
+    if(print.progress)
+      message("request ", counter, " pulled ", last_pull_n_count,
+              " rows... repeating, starting at library number ", starting_at)
 
     ret <- worldcat_api_locations_helper(x, type_std_num=type_std_num,
                                         max_libraries=max_libraries,
@@ -639,8 +644,9 @@ worldcat_api_locations_by_something <- function(x,
 
   final <- rbindlist(runninglist)
 
-  cat(sprintf("request %s pulled %s rows, returning with all data tables with %s rows in total\n\n",
-              counter, last_pull_n_count, final[,.N]))
+  if(print.progress)
+    message("request ", counter, " pulled ", last_pull_n_count,
+            " rows. Returning data.table with ", final[,.N], " rows in total.\n")
 
   if(include.bib.info){
     dt_del_cols(bibinfo, type_std_num)
@@ -777,7 +783,7 @@ worldcat_api_locations_by_oclc <- function(x,
                                           servicelevel="full",
                                           frbrGrouping="on",
                                           libtype=NULL,
-                                          wskey=getOption("libbib.wskey", ""),
+                                          wskey=getOption("libbib.wskey", NULL),
                                           print.progress=TRUE,
                                           debug=FALSE){
   ret <- worldcat_api_locations_by_something(x, type_std_num="oclc",
@@ -806,7 +812,7 @@ worldcat_api_locations_by_isbn <- function(x,
                                           servicelevel="full",
                                           frbrGrouping="on",
                                           libtype=NULL,
-                                          wskey=getOption("libbib.wskey", ""),
+                                          wskey=getOption("libbib.wskey", NULL),
                                           print.progress=TRUE,
                                           debug=FALSE){
   ret <- worldcat_api_locations_by_something(x, type_std_num="isbn",
@@ -834,7 +840,7 @@ worldcat_api_locations_by_issn <- function(x,
                                           servicelevel="full",
                                           frbrGrouping="on",
                                           libtype=NULL,
-                                          wskey=getOption("libbib.wskey", ""),
+                                          wskey=getOption("libbib.wskey", NULL),
                                           print.progress=TRUE,
                                           debug=FALSE){
   ret <- worldcat_api_locations_by_something(x, type_std_num="issn",
@@ -864,7 +870,7 @@ worldcat_api_locations_by_issn <- function(x,
 # un-exported helper function
 construct_wcapi_search_url <- function(sru, max_records=100,
                                        frbrGrouping="on", start_at=1,
-                                       wskey=getOption("libbib.wskey", "")){
+                                       wskey=getOption("libbib.wskey", NULL)){
   # error checking
   if(class(sru)!="character")
     stop("SRU search must be a string")
@@ -876,6 +882,8 @@ construct_wcapi_search_url <- function(sru, max_records=100,
     stop('frfbGrouping must be "on" or "off"')
   if(class(start_at)!="numeric")
     stop("start_at must be a number")
+  if(is.null(wskey))
+    stop("a WSKEY (WorldCat API key) must be specified")
 
   building <- "http://www.worldcat.org/webservices/catalog/search/worldcat/sru"
 
@@ -905,7 +913,7 @@ construct_wcapi_search_url <- function(sru, max_records=100,
 
 worldcat_api_search_helper <- function(sru, max_records=100,
                                        frbrGrouping="on", start_at=1,
-                                       wskey=getOption("libbib.wskey", ""),
+                                       wskey=getOption("libbib.wskey", NULL),
                                        more=TRUE,
                                        debug=FALSE){
 
@@ -917,33 +925,40 @@ worldcat_api_search_helper <- function(sru, max_records=100,
                                         start_at=start_at,
                                         wskey=wskey)
   if(debug)
-    cat(sprintf("\n\nfull api call url:\n%s\n\n", fullurl))
+    message("\nFull Search API call url:\n", fullurl)
 
   resp <- worldcat_api_get_http_response(fullurl, print.api.responses=debug)
   content <- resp$content
 
   if(debug){
-    cat("\nSearch API response:\n")
-    cat(content)
-    cat("\nEnd of Search API response\n\n")
+    message("\nSearch API response:")
+    message(content, appendLF=FALSE)
+    message("End of Search API response\n")
   }
 
   exemel <- xml2::read_xml(content, options=NULL)
   xml2::xml_ns_strip(exemel)
 
-  num_results <- xml2::xml_text(xml2::xml_find_first(exemel, "//searchRetrieveResponse/numberOfRecords"))
+  total_wc_results <- xml2::xml_text(xml2::xml_find_first(exemel, "//searchRetrieveResponse/numberOfRecords"))
   all_records <- xml2::xml_find_all(exemel, "//searchRetrieveResponse/records/record/recordData/record")
   num_records <- length(all_records)
-  if(num_records==0)
+  if(num_records==0){
+    diag.message <- xml2::xml_find_first(exemel, "//searchRetrieveResponse/diagnostics/diagnostic/message")
+    diag.details <- xml2::xml_find_first(exemel, "//searchRetrieveResponse/diagnostics/diagnostic/details")
+    if(length(diag.message)>0){
+      message("Received diagnostic message: ", xml2::xml_text(diag.message),
+              " (", xml2::xml_text(diag.details), ")")
+    }
     return(NULL)
+  }
 
   tmp <- lapply(all_records, function(x){read_a_marcxml_record(x, more=more)})
   ret <- rbindlist(tmp)
 
-  ret[, num_results:=num_results]
+  ret[, total_wc_results:=total_wc_results]
   ret[, result_number:=seq(start_at, start_at+num_records-1)]
   ret[, query:=sru]
-  setcolorder(ret, c("num_results", "result_number"))
+  setcolorder(ret, c("total_wc_results", "result_number"))
   ret[]
 }
 
@@ -956,25 +971,34 @@ worldcat_api_search_helper <- function(sru, max_records=100,
 #' containing the bibliographic metadata of the results, along
 #' with the total number of results.
 #'
+#' There is an entire vignette dedicated to this function; to view it,
+#' execute \code{vignette("using-the-worldcat-search-api")}
+#'
 #' @param sru The search query (in CQL syntax). See \code{examples} section
 #'            for some examples.
 #' @param max_records The maximum number of search results to return.
 #'                    Must be a number between 0 and 100 or \code{Inf}.
-#'                    If \code{Inf} (default), the function will
+#'                    If \code{Inf}, the function will
 #'                    automatically make all follow-up requests to retrieve
 #'                    all search results. For safety, the default is 10.
+#' @param sru_query_assist A logical indicating whether translation from
+#'                         more human-readable aliases to the SRU search
+#'                         index codes should be allowed. See details for
+#'                         more information. (default is \code{TRUE}). You
+#'                         can control this parameter globally by setting
+#'                         \code{options("libbib.sru_query_assist")}.
 #' @param frbrGrouping With this parameter set to "on" (default),
 #'                     an attempt is made by the WorldCat API to group
 #'                     together similar editions and present only the top
 #'                     held record as the representative record for that group.
 #' @param start_at The search result to start at (default is 1)
 #' @param wskey A WorldCat API key (default is \code{getOption("libbib.wskey")})
-#' @param more A logical indicating whether more infomation from the MARCXML
+#' @param more A logical indicating whether more information from the MARCXML
 #'             search results should be returned (publisher, bib level, etc....).
 #'             (Default is \code{TRUE})
 #' @param print.progress A logical indicating whether a message should be
 #'                       displayed for each API request. If \code{max_records}
-#'                       is \code{TRUE} a message will be displayed for every
+#'                       is \code{Inf} a message will be displayed for every
 #'                       group of 100 search results the function fetches.
 #'                       (default is \code{TRUE})
 #' @param debug A logical indicating whether the HTTP and API
@@ -982,6 +1006,13 @@ worldcat_api_search_helper <- function(sru, max_records=100,
 #'              (default is \code{FALSE})
 #'
 #' @details
+#'
+#' By default, this function allows for the usage of more human-readable
+#' aliases to the arcane SRU search index codes. This allows you, for
+#' example, to search using "$title" instead of "srw.ti". This behavior is
+#' controlled using the `sru_query_assist` parameter. If it is \code{TRUE}
+#' (the default) you can still use the formal search index codes. See
+#' \code{vignette("using-the-worldcat-search-api")} for more information.
 #'
 #' As with all API access functions in this package, it's up to the
 #' user to limit their API usage so as to not get blocked. These
@@ -1000,41 +1031,62 @@ worldcat_api_search_helper <- function(sru, max_records=100,
 #'
 #' \dontrun{
 #'
-#' # A title search of "The Brothers Karamazov"
-#' worldcat_api_search('srw.ti="Brothers Karamazov"')
+#' # A title search for "The Brothers Karamazov"
+#' worldcat_api_search('$title = "Brothers Karamazov"')
+#'
+#' # An exact title search for "The Brothers Karamazov"
+#' worldcat_api_search('$title exact "Brothers Karamazov"')
 #'
 #' # Search for title "Madame Bovary" by author "Gustave Flaubert"
 #' # in language Greek (all results)
-#' sru <- 'srw.au="Gustave Flaubert" and srw.ti="Madame Bovary" and srw.la=gre'
+#' # (queries may span multiple lines)
+#' sru <- '$author = "Gustave Flaubert" and $title="Madame Bovary"
+#'           and $language=greek'
 #' worldcat_api_search(sru, max_records=Inf)
 #'
 #' # Hip Hop (subject) materials on Cassette, CD, or wax from years 1987 to 1990
-#' sru <- '((srw.mt=cas or srw.mt=cda or srw.mt=lps) and srw.su="Rap") and srw.yr="1987-1990"'
+#' sru <- '(($material_type=cas or $material_type=cda or $material_type=lps)
+#'            and $subject="Rap") and $year="1987-1990"'
 #' worldcat_api_search(sru)
 #'
 #' # all materials with keyword "Common Lisp" at The New York Public Library
-#' sru <- 'srw.kw="common lisp" and srw.li=NYP'
+#' sru <- '$keyword="common lisp" and $holding_library=NYP'
 #' worldcat_api_search(sru, max_records=Inf)
 #'
 #' # 19th century materials on ethics (Dewey code 170s / LC Call prefix BJ)
-#' sru <- '(srw.dd="17*" or srw.lc="bj*") and srw.yr="18*"'
+#' sru <- '($dewey="17*" or $lc_call="bj*") and $year="18*"'
 #' worldcat_api_search(sru, max_records=Inf)
 #'
 #' # Music (Dewey 780s) materials that are only held by The New York Public
 #' # Library (a "cg" code of 11 means there is only one holding)
 #' # [searching with debugging]
-#' sru <- 'srw.dd="78*" and srw.li=NYP and srw.cg=11'
+#' sru <- '$dewey="78*" and $holding_library=NYP
+#'           and $library_holdings_group=11'
 #' worldcat_api_search(sru, debug=TRUE)
+#'
+#' Keyword search for "danger music" from year 2010 to present
+#' worldcat_api_search('$keyword="danger music" and $year="2010-"')
 #'
 #' }
 #' @export
 worldcat_api_search <- function(sru, max_records=10,
-                                 frbrGrouping="on", start_at=1,
-                                 wskey=getOption("libbib.wskey", ""),
-                                 more=TRUE, print.progress=TRUE,
-                                 debug=FALSE){
+                                sru_query_assist=getOption("libbib.sru_query_assist", TRUE),
+                                frbrGrouping="on", start_at=1,
+                                wskey=getOption("libbib.wskey", NULL),
+                                more=TRUE, print.progress=TRUE,
+                                debug=FALSE){
   # debug implies print progress
   if(debug) print.progress=TRUE
+
+  # clean SRU query
+  sru <- stringr::str_replace_all(sru, "[\r\n]" , "")
+  sru <- stringr::str_replace_all(sru, "  *" , " ")
+
+  # sru_query_assist (translate helpful names to worldcat SRU indexes)
+  if(sru_query_assist){
+    sru <- sru_syntax_translate_worldcat(sru)
+    if(debug) message("final (possibly translated) sru is: '", sru, "'")
+  }
 
   all_the_way_p <- FALSE
   if(is.infinite(max_records)){
@@ -1053,7 +1105,7 @@ worldcat_api_search <- function(sru, max_records=10,
                                     more=more, debug=debug)
 
   if(is.null(ret)){
-    print("no results found")
+    message("no results found")
     return(NULL)
   }
 
@@ -1066,23 +1118,30 @@ worldcat_api_search <- function(sru, max_records=10,
 
   while(last_pull_n_count==100){
     starting_at <- 1+(100*counter)
-    cat(sprintf("request %s pulled %s rows... repeating, starting at result %s\n",
-                counter, last_pull_n_count, starting_at))
+    if(print.progress)
+      message("request ", counter, " pulled ", last_pull_n_count,
+              " rows... repeating, starting at library number ", starting_at)
 
     ret <- worldcat_api_search_helper(sru, max_records=max_records,
                                       frbrGrouping=frbrGrouping,
                                       start_at=starting_at,
                                       wskey=wskey,
                                       more=more, debug=debug)
-    counter <- counter + 1
-    runninglist[[counter]] <- ret
-    last_pull_n_count <- ret[,.N]
+
+    if(is.null(ret)){
+      last_pull_n_count <- 0
+    } else{
+      counter <- counter + 1
+      runninglist[[counter]] <- ret
+      last_pull_n_count <- ret[,.N]
+    }
   }
 
   final <- rbindlist(runninglist)
 
-  cat(sprintf("request %s pulled %s rows, returning with all data tables with %s rows in total\n\n",
-              counter, last_pull_n_count, final[,.N]))
+  if(print.progress)
+    message("request ", counter, " pulled ", last_pull_n_count,
+            " rows. Returning data.table with ", final[,.N], " rows in total.\n")
 
   return(final[])
 }

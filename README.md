@@ -26,13 +26,14 @@ It salvaged almost half a million previously unusable ISBNs, bringing
 the number of usable ISBNs (for matching, cataloging, etc...) from
 less than 90% to 99.6%!
 
-_Note these timings will change for the better or worse pending_
-  - _performance enhancements_
-  - _recognition and handling procedures for other ways in which
-   malformed ISBNs can be salvaged_
-
 As for robustness, this package is well tested, with over 300
-automated tests, at time of writing
+automated tests, at time of writing.
+
+`data.table` is a hard dependency of this package. Using `data.table`
+internally makes, for example, the call number -> subject conversions
+very fast. Additionally, loading this package also automatically
+loads `data.table`. If you don't use `data.table` in your own code,
+everything will work just fine! But you might want to look into it!
 
 ## Some examples
 
@@ -56,7 +57,8 @@ automated tests, at time of writing
 
 > # Do a WorldCat APU search on 19th century materials on ethics
 > # (Dewey code 170s / LC Call prefix BJ)
-> results <- worldcat_api_search('(srw.dd="17*" or srw.lc="bj*") and srw.yr="18*"')
+> results <- worldcat_api_search('($dewey="17*" or $lc_call="bj*")
++                                    and srw.yr="18*"')
 > results[,.(oclc, title, result_number, num_results)][1:5]
         oclc                                       title result_number num_results
       <char>                                      <char>         <int>      <char>
@@ -64,7 +66,7 @@ automated tests, at time of writing
 2: 191264919                The economy of human life. /             2        1716
 3:  22571399                                   Solitude:             3        1716
 4:  65250134 The theory of moral sentiments, or, An e...             4        1716
-5:  13106952    Letters on the improvement of the mind :             5        1716 
+5:  13106952    Letters on the improvement of the mind :             5        1716
 
 > worldcat_api_bib_read_info_by_isbn("9780984201006")
         oclc          isbn   issn                        title
@@ -127,14 +129,14 @@ automated tests, at time of writing
 1: Language Material Monograph/Item
 
 # The Brothers Karamazov (1970 reissue but original publication date)
-> marc_008_get_info("950622r19701880ru            000 0 rus d")
+> marc_008_get_info("950622r19701880ru            000 0 rus d",
++                    original.pub.date=TRUE)
       pub_date pub_place_code lang_code
          <int>         <char>    <char>
   1:     1880             ru       rus
 
 # reissue publication date
-> marc_008_get_info("950622r19701880ru            000 0 rus d",
-                    original.pub.date=FALSE)
+> marc_008_get_info("950622r19701880ru            000 0 rus d")
       pub_date pub_place_code lang_code
          <int>         <char>    <char>
   1:     1970             ru       rus
@@ -245,10 +247,10 @@ Key: <thekey>
   (from https://www.oclc.org/content/dam/oclc/dewey/ddc23-summaries.pdf)
 - `books_serials_etc_sample` -  A very small sample of books, serials, VHSs,
   CDs, and Computer files and some information including title, control
-  numbers, call numbers, and call number subject classifications. Somewhat 
+  numbers, call numbers, and call number subject classifications. Somewhat
   messy/inconsistent (deliberately) and mainly for testing.
-  Will be expanded in future versions. 
-  
+  Will be expanded in future versions.
+
 ### Marc field deconstruction
 - `marc_leader_get_info`
 - `marc_008_get_info`
@@ -270,6 +272,7 @@ Key: <thekey>
 - `get_clean_names`
 - `dt_set_clean_names`
 - `dt_percent_not_na`
+- `dt_na_breakdown`
 - `dt_add_to_col_names`
 
 
