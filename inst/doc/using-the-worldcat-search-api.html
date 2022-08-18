@@ -14,7 +14,19 @@
 
 <title>Using the WorldCat Search API</title>
 
-<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -24,6 +36,7 @@
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
   ul.task-list{list-style: none;}
     </style>
+
 
 
 <style type="text/css">
@@ -125,7 +138,187 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
 
 
 
@@ -144,37 +337,80 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># let&#39;s load this package before getting started</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(libbib)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Loading required package: data.table</span></span></code></pre></div>
-<p><em>Intermediate knowledge of R is required to follow the examples here.</em></p>
-<p><em>Basic knowledge of how to manipulate <code>data.table</code>s if helpful but</em> <em>following the examples should be possible without it.</em></p>
+<p><em>Intermediate knowledge of R is required to follow the examples
+here.</em></p>
+<p><em>Basic knowledge of how to manipulate <code>data.table</code>s if
+helpful but</em> <em>following the examples should be possible without
+it.</em></p>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p><code>libbib</code>’s ability to communicate to the WorldCat Search API is probably the most helpful capability of the package. As such, an entire vignette dedicated to this powerful tool is warranted.</p>
-<p>Also of note is that documentation on how to use this API is scattered throughout the web, in different places, and sometimes even no longer available and only accessible through the internet archive. Because of this, the goal of this vignette is not only to document <code>libbib</code>’s <code>worldcat_api_search</code> function, but to provide a single location for compiling this archived documentation and providing information/examples of what the WorldCat Search API is capable, in general.</p>
-<p>The terminology/nomenclature of the different WorldCat API offerings is fuzzy and inconsistent. The specific kind of Search API that this package offers usage of can, more specifically, be described as the ‘WorldCat SRU Search API version 1’.</p>
-<p>There is a version 2 of this API, but version 1 hasn’t been sunsetted as of yet.</p>
+<p><code>libbib</code>’s ability to communicate to the WorldCat Search
+API is probably the most helpful capability of the package. As such, an
+entire vignette dedicated to this powerful tool is warranted.</p>
+<p>Also of note is that documentation on how to use this API is
+scattered throughout the web, in different places, and sometimes even no
+longer available and only accessible through the internet archive.
+Because of this, the goal of this vignette is not only to document
+<code>libbib</code>’s <code>worldcat_api_search</code> function, but to
+provide a single location for compiling this archived documentation and
+providing information/examples of what the WorldCat Search API is
+capable, in general.</p>
+<p>The terminology/nomenclature of the different WorldCat API offerings
+is fuzzy and inconsistent. The specific kind of Search API that this
+package offers usage of can, more specifically, be described as the
+‘WorldCat SRU Search API version 1’.</p>
+<p>There is a version 2 of this API, but version 1 hasn’t been sunsetted
+as of yet.</p>
 <p>First, let’s speak of what this API is and what it is not.</p>
 </div>
 <div id="what-the-worldcat-sru-search-api-is" class="section level2">
 <h2>What the WorldCat SRU Search API is</h2>
-<p>This API is allows a developer to search for bibliographic records that are cataloged in WorldCat.</p>
-<p>The queries are made using <a href="https://en.wikipedia.org/wiki/Search/Retrieve_via_URL">the SRU standard search protocol</a> (Search/Retrieve via URL) using a standard query syntax called <a href="https://en.wikipedia.org/wiki/Contextual_Query_Language">CQL</a> (Contextual Query Language). The WorldCat Search API doesn’t implement all features of CQL; this vignette will illustrate SRU/CQL only insofar as it is supported by this API.</p>
-<p>This API is open to libraries that maintain both WorldCat Discovery and OCLC Cataloging subscriptions and needs an API key (called a <code>WSKey</code>) to work. A request can be made for a key (if your institution doesn’t already have one) via <a href="https://help.oclc.org/Discovery_and_Reference/WorldCat_Discovery/Troubleshooting/How_do_I_request_a_WSKey_for_the_WorldCat_Search_API">this link.</a></p>
+<p>This API is allows a developer to search for bibliographic records
+that are cataloged in WorldCat.</p>
+<p>The queries are made using <a href="https://en.wikipedia.org/wiki/Search/Retrieve_via_URL">the SRU
+standard search protocol</a> (Search/Retrieve via URL) using a standard
+query syntax called <a href="https://en.wikipedia.org/wiki/Contextual_Query_Language">CQL</a>
+(Contextual Query Language). The WorldCat Search API doesn’t implement
+all features of CQL; this vignette will illustrate SRU/CQL only insofar
+as it is supported by this API.</p>
+<p>This API is open to libraries that maintain both WorldCat Discovery
+and OCLC Cataloging subscriptions and needs an API key (called a
+<code>WSKey</code>) to work. A request can be made for a key (if your
+institution doesn’t already have one) via <a href="https://help.oclc.org/Discovery_and_Reference/WorldCat_Discovery/Troubleshooting/How_do_I_request_a_WSKey_for_the_WorldCat_Search_API">this
+link.</a></p>
 </div>
 <div id="what-the-worldcat-sru-search-api-is-not" class="section level2">
 <h2>What the WorldCat SRU Search API is not</h2>
-<p>This API is not the OpenSearch/Basic API, which doesn’t allow field-specific searches and only supports keyword-anywhere searches.</p>
-<p>This is also not the same as using the <a href="https://www.worldcat.org/advancedsearch">advanced search option on worldcat.org</a>. That option only provides a subset of the bibliographic records in WorldCat and is a far less powerful tool.</p>
-<p>This API is most akin to using the “expert search” option in OCLC’s FirstSearch, using the WorldCat database, but differs in that (a) searching the API is programmatically automate-able, and (b) the API allows for, still, more powerful search queries.</p>
+<p>This API is not the OpenSearch/Basic API, which doesn’t allow
+field-specific searches and only supports keyword-anywhere searches.</p>
+<p>This is also not the same as using the <a href="https://www.worldcat.org/advancedsearch">advanced search option on
+worldcat.org</a>. That option only provides a subset of the
+bibliographic records in WorldCat and is a far less powerful tool.</p>
+<p>This API is most akin to using the “expert search” option in OCLC’s
+FirstSearch, using the WorldCat database, but differs in that (a)
+searching the API is programmatically automate-able, and (b) the API
+allows for, still, more powerful search queries.</p>
 </div>
 <div id="what-libbibs-worldcat_api_search-function-provides" class="section level2">
-<h2>What <code>libbib</code>’s <code>worldcat_api_search</code> function provides</h2>
-<p>At its most basic, this function takes a SRU query and returns a <code>data.table</code> with most of the bibliographic metadata from the MARCXml that the API returns. We’ll see how the behavior of this function can be controlled by specifying certain function parameters.</p>
-<p>This function also offers assistance with the SRU query syntax. Mainly, the function allows you to substitute the arcane search index codes for more human-readable equivalents, prefixed be a (US) dollar-sign. Examples of these aids will be explained later in the vignette.</p>
+<h2>What <code>libbib</code>’s <code>worldcat_api_search</code> function
+provides</h2>
+<p>At its most basic, this function takes a SRU query and returns a
+<code>data.table</code> with most of the bibliographic metadata from the
+MARCXml that the API returns. We’ll see how the behavior of this
+function can be controlled by specifying certain function
+parameters.</p>
+<p>This function also offers assistance with the SRU query syntax.
+Mainly, the function allows you to substitute the arcane search index
+codes for more human-readable equivalents, prefixed be a (US)
+dollar-sign. Examples of these aids will be explained later in the
+vignette.</p>
 </div>
 <div id="an-example-of-usage-and-what-the-function-returns" class="section level2">
 <h2>An example of usage and what the function returns</h2>
-<p>Let’s look at an example of a simple query and what the returned <code>data.table</code> looks like.</p>
-<p>Specifically, we’ll search for “Madame Bovary” by “Gustave Flaubert” and we’ll only show the first three results</p>
+<p>Let’s look at an example of a simple query and what the returned
+<code>data.table</code> looks like.</p>
+<p>Specifically, we’ll search for “Madame Bovary” by “Gustave Flaubert”
+and we’ll only show the first three results</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(libbib)      <span class="co"># load this package</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">worldcat_api_search</span>(<span class="st">&#39;$title=&quot;Madame Bovary&quot; and</span></span>
@@ -214,18 +450,31 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1: srw.ti=&quot;Madame Bovary&quot; and srw.au=&quot;Gustave Flauber...</span></span>
 <span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2: srw.ti=&quot;Madame Bovary&quot; and srw.au=&quot;Gustave Flauber...</span></span>
 <span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3: srw.ti=&quot;Madame Bovary&quot; and srw.au=&quot;Gustave Flauber...</span></span></code></pre></div>
-<p>This should give you an idea of the rich information returned by the results <code>data.table</code>. All of the information returned is from (or derived from) the MARCXml that the API returns, save for</p>
+<p>This should give you an idea of the rich information returned by the
+results <code>data.table</code>. All of the information returned is from
+(or derived from) the MARCXml that the API returns, save for</p>
 <ul>
-<li><p><code>total_wc_results</code> Which returns the number of the results the query yields in WorldCat even if the number of records/results requested is lower than this number.</p></li>
-<li><p><code>result_number</code> This number of the result, which is helpful if you’re using a starting position other than <code>1</code> (the default)</p></li>
-<li><p><code>query</code> The final SRU query (after any of the SRU query assistance routines step in) that is sent to the API. This can be useful for debugging.</p></li>
+<li><p><code>total_wc_results</code> Which returns the number of the
+results the query yields in WorldCat even if the number of
+records/results requested is lower than this number.</p></li>
+<li><p><code>result_number</code> This number of the result, which is
+helpful if you’re using a starting position other than <code>1</code>
+(the default)</p></li>
+<li><p><code>query</code> The final SRU query (after any of the SRU
+query assistance routines step in) that is sent to the API. This can be
+useful for debugging.</p></li>
 </ul>
-<p>Hereafter, the output of the example queries will be abbreviated, truncated, elided, or only show a subset of columns in order to save space and aid in following the guide.</p>
+<p>Hereafter, the output of the example queries will be abbreviated,
+truncated, elided, or only show a subset of columns in order to save
+space and aid in following the guide.</p>
 </div>
 <div id="what-does-an-error-look-like" class="section level2">
 <h2>What does an error look like</h2>
-<p>If you craft a query that yields no results, a message telling you such will be displayed, and the return value is <code>NULL</code>.</p>
-<p>If you make an error in the query syntax, no results will be returned, but a diagnostic message returned from the server may tell you what went wrong. Here are two examples…</p>
+<p>If you craft a query that yields no results, a message telling you
+such will be displayed, and the return value is <code>NULL</code>.</p>
+<p>If you make an error in the query syntax, no results will be
+returned, but a diagnostic message returned from the server may tell you
+what went wrong. Here are two examples…</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># missing ending double quotes</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">worldcat_api_search</span>(<span class="st">&#39;$title=&quot;Madame Bovary and $langauge=greek&#39;</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Received diagnostic message: Query syntax error (org.z3950.zing.cql.CQLParseException: expected index or term, got EOF)</span></span>
@@ -243,15 +492,29 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; for a non-limit index (srw.li)</span></span>
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; no results found</span></span>
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; NULL</span></span></code></pre></div>
-<p>This last one failed because <code>$holding_library</code> is considered a <em>limit index</em>. This means that you can’t use it to search directly, you can only combine with search facet with other non-limiting indexes to filter the results. Hopefully this will make more sense as you go through this vignette.</p>
+<p>This last one failed because <code>$holding_library</code> is
+considered a <em>limit index</em>. This means that you can’t use it to
+search directly, you can only combine with search facet with other
+non-limiting indexes to filter the results. Hopefully this will make
+more sense as you go through this vignette.</p>
 </div>
 <div id="worldcat_api_search-by-example-quick-start" class="section level2">
 <h2><code>worldcat_api_search</code> by example / quick start</h2>
-<p>In guides like this, there is frequently tension between wanting to be a complete reference, and wanting to show cool/helpful examples at a glance.</p>
-<p>In service of easing this tension, we’ll first look at some examples illustrating things this function can do and <em>then</em> turn our attention to an adequate explanation of boolean operators, relations operators, search indexes, etc…</p>
-<p>These examples are largely taken from the <code>examples</code> section of the R documentation for this function.</p>
-<p>These examples (and the ones further along in this vignette) will also use <code>data.table</code> syntax to limit number of rows and columns returned to aid reading.</p>
-<p>We’ll be focusing on the types of queries you can use in this section; controlling the behavior of the function via changing parameters will come later.</p>
+<p>In guides like this, there is frequently tension between wanting to
+be a complete reference, and wanting to show cool/helpful examples at a
+glance.</p>
+<p>In service of easing this tension, we’ll first look at some examples
+illustrating things this function can do and <em>then</em> turn our
+attention to an adequate explanation of boolean operators, relations
+operators, search indexes, etc…</p>
+<p>These examples are largely taken from the <code>examples</code>
+section of the R documentation for this function.</p>
+<p>These examples (and the ones further along in this vignette) will
+also use <code>data.table</code> syntax to limit number of rows and
+columns returned to aid reading.</p>
+<p>We’ll be focusing on the types of queries you can use in this
+section; controlling the behavior of the function via changing
+parameters will come later.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(libbib)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># title search for &quot;The Brothers Karamazov&quot;</span></span>
@@ -300,15 +563,22 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a><span class="co"># Search for materials on &quot;Danger Music&quot; published since 2010</span></span>
 <span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">worldcat_api_search</span>(<span class="st">&#39;$keyword=&quot;danger music&quot; and $year=&quot;2010-&quot;&#39;</span>)</span></code></pre></div>
-<p>Now that we’ve seen these examples, sans explanation, we can now have a closer look into the components of a query. Broadly speaking, there are four concepts to be aware of…</p>
+<p>Now that we’ve seen these examples, sans explanation, we can now have
+a closer look into the components of a query. Broadly speaking, there
+are four concepts to be aware of…</p>
 <ul>
 <li><p>relations operators</p></li>
 <li><p>boolean operators</p></li>
 <li><p>wildcards</p></li>
 <li><p>search indexes</p></li>
 </ul>
-<p>We’ll be looking at each in this order, because I think that makes the most sense. To illustrate the first three concepts, though, we have to use search indexes, before a formal explanation of what they are.</p>
-<p>Briefly, a search index is a facet along which to search. In all of the examples above, the search indexes were prefixed by a <code>$</code> character (e.g. <code>$title</code>, <code>author</code>, <code>$keyword</code>, etc…)</p>
+<p>We’ll be looking at each in this order, because I think that makes
+the most sense. To illustrate the first three concepts, though, we have
+to use search indexes, before a formal explanation of what they are.</p>
+<p>Briefly, a search index is a facet along which to search. In all of
+the examples above, the search indexes were prefixed by a <code>$</code>
+character (e.g. <code>$title</code>, <code>author</code>,
+<code>$keyword</code>, etc…)</p>
 </div>
 <div id="relations-operators" class="section level2">
 <h2>Relations operators</h2>
@@ -319,13 +589,26 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><p><code>any</code></p></li>
 <li><p><code>all</code></p></li>
 </ul>
-<p>It should be noted that not every relations operator is available for use with every search index.</p>
+<p>It should be noted that not every relations operator is available for
+use with every search index.</p>
 <div id="section" class="section level3">
 <h3><code>=</code></h3>
-<p>This was the most common operator used in the quick-start examples above. Though this operator can be most fully understood via contrast with the next operator, <code>exact</code>, suffice it to say, for now, that using <code>=</code> means that all of your search terms must match, without intervening words. This is sometimes referred to as an “un-anchored” search.</p>
-<p>If the phrase you’re search for has spaces in it, you have to surround it with double quotes. Since the SRU query to the <code>worldcat_api_search</code> function must be a string, and strings can be made with single quotes and double quotes, we need to surround the entire query with single quotes.</p>
-<p>We can get around this by “escaping” the quotes, but using only single quotes to surround the whole query is the most elegant approach.</p>
-<p>You can use both spaces and <code>+</code> to separate the search index and the search term on both sides of the relations operator…</p>
+<p>This was the most common operator used in the quick-start examples
+above. Though this operator can be most fully understood via contrast
+with the next operator, <code>exact</code>, suffice it to say, for now,
+that using <code>=</code> means that all of your search terms must
+match, without intervening words. This is sometimes referred to as an
+“un-anchored” search.</p>
+<p>If the phrase you’re search for has spaces in it, you have to
+surround it with double quotes. Since the SRU query to the
+<code>worldcat_api_search</code> function must be a string, and strings
+can be made with single quotes and double quotes, we need to surround
+the entire query with single quotes.</p>
+<p>We can get around this by “escaping” the quotes, but using only
+single quotes to surround the whole query is the most elegant
+approach.</p>
+<p>You can use both spaces and <code>+</code> to separate the search
+index and the search term on both sides of the relations operator…</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>sru <span class="ot">&lt;-</span> <span class="st">&#39;$title+=+&quot;Common Lisp&quot;&#39;</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">worldcat_api_search</span>(sru)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>results[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, .(total_wc_results, title)]</span>
@@ -344,11 +627,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2:              367 Practical Common Lisp /</span></span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3:              367           Common LISP /</span></span></code></pre></div>
 <p>But we’ll be using spaces here.</p>
-<p>The <code>=</code> relations operator is the only one that doesn’t require any space or <code>+</code> on either side of the operator, and we’ll be using both the spaced version and non-spaced version in these examples for this operator, only.</p>
+<p>The <code>=</code> relations operator is the only one that doesn’t
+require any space or <code>+</code> on either side of the operator, and
+we’ll be using both the spaced version and non-spaced version in these
+examples for this operator, only.</p>
 </div>
 <div id="exact-anchored-search" class="section level3">
 <h3><code>exact</code> (anchored search)</h3>
-<p>The <code>exact</code> operator, in contrast with the <code>=</code> operator, signals to the API that your search must match as an exact phrase, without any other terms in the matching string. For this reason, this operator is sometimes referred to as an “anchored search”.</p>
+<p>The <code>exact</code> operator, in contrast with the <code>=</code>
+operator, signals to the API that your search must match as an exact
+phrase, without any other terms in the matching string. For this reason,
+this operator is sometimes referred to as an “anchored search”.</p>
 <p>Here’s an example using the same title search as above…</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">worldcat_api_search</span>(<span class="st">&#39;$title exact &quot;Common Lisp&quot;&#39;</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>results[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, .(total_wc_results, title)]</span>
@@ -357,13 +646,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1:               37 Common Lisp /</span></span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2:               37 Common LISP /</span></span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3:               37 Common LISP /</span></span></code></pre></div>
-<p>Note that the title “Practical Common Lisp” was returned by the <code>=</code> operator query. The <code>exact</code> operator will not match this title since it has another word/phrase in it besides “Common Lisp”.</p>
-<p>Using an <code>exact</code> search is probably a better fit than <code>=</code> for some indexes and in some situations. For example, if you know the exact title of a book (e.g. <code>$title exact &quot;Brothers Karamazov&quot;)</code>, using <code>exact</code> will ensure that books with a title like <em>&quot;A Guide to The</em> <em>Brothers Karamazov&quot;</em> or <em>“The Brothers Karamazov in Pictures”</em> are not returned by the search.</p>
-<p>That being said, we’ll be using the <code>=</code> most heavily, and it’s easier to read.</p>
+<p>Note that the title “Practical Common Lisp” was returned by the
+<code>=</code> operator query. The <code>exact</code> operator will not
+match this title since it has another word/phrase in it besides “Common
+Lisp”.</p>
+<p>Using an <code>exact</code> search is probably a better fit than
+<code>=</code> for some indexes and in some situations. For example, if
+you know the exact title of a book
+(e.g. <code>$title exact &quot;Brothers Karamazov&quot;)</code>, using
+<code>exact</code> will ensure that books with a title like <em>“A Guide
+to The</em> <em>Brothers Karamazov”</em> or <em>“The Brothers Karamazov
+in Pictures”</em> are not returned by the search.</p>
+<p>That being said, we’ll be using the <code>=</code> most heavily, and
+it’s easier to read.</p>
 </div>
 <div id="any" class="section level3">
 <h3>any</h3>
-<p>Using <code>any</code> means that any of your search terms (inside the double quotes) can match. For example…</p>
+<p>Using <code>any</code> means that any of your search terms (inside
+the double quotes) can match. For example…</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">worldcat_api_search</span>(<span class="st">&#39;$title any &quot;Common Lisp&quot;&#39;</span>)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>results[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, .(total_wc_results, title)]</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    total_wc_results                                                 title</span></span>
@@ -371,8 +671,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1:           351777 An Inquiry into the Human Mind on the Principles o...</span></span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2:           351777                            The book of common prayer.</span></span>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3:           351777                        Dictionary of Phrase and Fable</span></span></code></pre></div>
-<p>matches the title “The book of common prayer” (decidedly <em>not</em> a book of the subject of Common Lisp) since it has the word “common” in it. (Note that capitalization doesn’t matter).</p>
-<p>Using <code>any</code> in this context is tantamount to using an <code>or</code> boolean operator, which we’ll look at in the next section…</p>
+<p>matches the title “The book of common prayer” (decidedly <em>not</em>
+a book of the subject of Common Lisp) since it has the word “common” in
+it. (Note that capitalization doesn’t matter).</p>
+<p>Using <code>any</code> in this context is tantamount to using an
+<code>or</code> boolean operator, which we’ll look at in the next
+section…</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">worldcat_api_search</span>(<span class="st">&#39;$title = Common or $title = &quot;Lisp&quot;&#39;</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>results[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, .(total_wc_results, title)]</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    total_wc_results                                                 title</span></span>
@@ -384,12 +688,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="all" class="section level3">
 <h3><code>all</code></h3>
-<p>Using the <code>all</code> operator means that <em>all</em> of the search terms must match but the search terms can be in any order and have intervening terms in between. For example, search like <code>$title all &quot;Common Lisp&quot;</code> can match a (fictional) book named <em>“Speaking with a lisp is common”</em>.</p>
+<p>Using the <code>all</code> operator means that <em>all</em> of the
+search terms must match but the search terms can be in any order and
+have intervening terms in between. For example, search like
+<code>$title all &quot;Common Lisp&quot;</code> can match a (fictional) book named
+<em>“Speaking with a lisp is common”</em>.</p>
 </div>
 <div id="a-quick-note-before-continuing" class="section level3">
 <h3>A quick note before continuing</h3>
-<p>If your search term is one word, you do not have to use double quotes to surround the term. For example, <code>$title = Ethics</code> and <code>$title exact Ethics</code> work perfectly well.</p>
-<p>If your search term as a single quote in it, it must be escaped so that R doesn’t interpret it as the end of the search string. That being said, it appears as if you can just drop the single quote and the search will carry on perfectly fine…</p>
+<p>If your search term is one word, you do not have to use double quotes
+to surround the term. For example, <code>$title = Ethics</code> and
+<code>$title exact Ethics</code> work perfectly well.</p>
+<p>If your search term as a single quote in it, it must be escaped so
+that R doesn’t interpret it as the end of the search string. That being
+said, it appears as if you can just drop the single quote and the search
+will carry on perfectly fine…</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">worldcat_api_search</span>(<span class="st">&#39;$title exact &quot;Finnegans Wake&quot;&#39;</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>results[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, .(total_wc_results, title, query)]</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    total_wc_results            title                         query</span></span>
@@ -412,23 +725,39 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="boolean-operators-and-operator-precedence" class="section level2">
 <h2>Boolean operators (and operator precedence)</h2>
-<p>As evinced in the examples shown earlier in this vignette, you can use the boolean operators <strong>and</strong>, <strong>or</strong>, and <strong>not</strong> to refine your search.</p>
-<p>As you mix different boolean operators in a single query, care must be taken to ensure that the order/precedence of these operators matches your intention.</p>
-<p>For example, in one of the examples above, we searched for Hip Hop materials on wax, cassette, or CD published from 1987 to 1990 with the following SRU query</p>
+<p>As evinced in the examples shown earlier in this vignette, you can
+use the boolean operators <strong>and</strong>, <strong>or</strong>, and
+<strong>not</strong> to refine your search.</p>
+<p>As you mix different boolean operators in a single query, care must
+be taken to ensure that the order/precedence of these operators matches
+your intention.</p>
+<p>For example, in one of the examples above, we searched for Hip Hop
+materials on wax, cassette, or CD published from 1987 to 1990 with the
+following SRU query</p>
 <pre><code>&#39;(($material_type=cas or $material_type=cda or $material_type=lps)
    and $subject=&quot;Rap&quot;) and $year=&quot;1987-1990&quot;&#39;</code></pre>
-<p>It’s important to note that if we wrote the query like shown below</p>
+<p>It’s important to note that if we wrote the query like shown
+below</p>
 <pre><code>$material_type=cas or $material_type=cda or $material_type=lps
    and $subject=&quot;Rap&quot; and $year=&quot;1987-1990&quot;&#39;</code></pre>
-<p>without any parentheses, the meaning of the query would be ambiguous. Make sure you use parentheses around distinct sections of your search incantation to disambiguate the query.</p>
+<p>without any parentheses, the meaning of the query would be ambiguous.
+Make sure you use parentheses around distinct sections of your search
+incantation to disambiguate the query.</p>
 </div>
 <div id="wildcards" class="section level2">
 <h2>Wildcards</h2>
 <p><em>taken verbatim from the archived documentation</em></p>
-<p>For right truncation use an asterisk - * There must be at least three characters before the * for the query to work. There is no left truncation.</p>
-<p>To wildcard a single character wildcard use a number sign - #. So a query for wom#n provides results that include both woman and women in the results.</p>
-<p>For a 0-9 number of characters as wildcard characters use ?n. So a query for colo?1r provides results of color and colour.</p>
-<p>To wildcard characters within (or at the end) a term use the question mark - ?. So a query for colo?r provides results of color, colour, colonizer, and colorimeter.</p>
+<p>For right truncation use an asterisk - * There must be at least three
+characters before the * for the query to work. There is no left
+truncation.</p>
+<p>To wildcard a single character wildcard use a number sign - #. So a
+query for wom#n provides results that include both woman and women in
+the results.</p>
+<p>For a 0-9 number of characters as wildcard characters use ?n. So a
+query for colo?1r provides results of color and colour.</p>
+<p>To wildcard characters within (or at the end) a term use the question
+mark - ?. So a query for colo?r provides results of color, colour,
+colonizer, and colorimeter.</p>
 </div>
 <div id="table-of-all-available-search-indexes" class="section level2">
 <h2>Table of all available search indexes</h2>
@@ -563,27 +892,53 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2>Selected Search Indexes in focus</h2>
 <div id="title-srw.ti" class="section level3">
 <h3>$title / srw.ti</h3>
-<p>According to the archived Search API documentation, (I have strong doubts) the title search phrase will automatically elide certain common and “un-important” words. In the field of Natural Language Processing, we call these “stop words”.</p>
-<p>The archive docs indicates that the following words will be removed from the search phase:</p>
-<p>a, als, am, an, are, as, at, auf, aus, be, but, by, das, dass, de, der, des, dich, dir, du, er, es, for, from, had, have, he, her, his, how, ihr, ihre, ihres, im, in, is, ist, it, kein, la, le, les, mein, mich, mir, mit, of, on, sein, sie, that, the, this, to, un, une, von, was, wer, which, wie, wird, with, yousie, that, the, this, to, un, une, von, was, wer, which, wie, wird, with, you.</p>
-<p>This means that title searches for <em>The Brothers Karamazov</em>, <em>La Noche Boca Arriba</em>, <em>Das Spiel ist aus</em>, or <em>Das Kapital</em> will, alledgely, internally use the seach phrases <em>Brothers Karamazov</em>, <em>Noche Boca Arriba</em>, <em>Spiel</em>, and <em>Kapital</em>, respectively.</p>
-<p>When searching the title index, though, I’d leave these words in the SRU search query for two reasons…</p>
+<p>According to the archived Search API documentation, (I have strong
+doubts) the title search phrase will automatically elide certain common
+and “un-important” words. In the field of Natural Language Processing,
+we call these “stop words”.</p>
+<p>The archive docs indicates that the following words will be removed
+from the search phase:</p>
+<p>a, als, am, an, are, as, at, auf, aus, be, but, by, das, dass, de,
+der, des, dich, dir, du, er, es, for, from, had, have, he, her, his,
+how, ihr, ihre, ihres, im, in, is, ist, it, kein, la, le, les, mein,
+mich, mir, mit, of, on, sein, sie, that, the, this, to, un, une, von,
+was, wer, which, wie, wird, with, yousie, that, the, this, to, un, une,
+von, was, wer, which, wie, wird, with, you.</p>
+<p>This means that title searches for <em>The Brothers Karamazov</em>,
+<em>La Noche Boca Arriba</em>, <em>Das Spiel ist aus</em>, or <em>Das
+Kapital</em> will, alledgely, internally use the seach phrases
+<em>Brothers Karamazov</em>, <em>Noche Boca Arriba</em>, <em>Spiel</em>,
+and <em>Kapital</em>, respectively.</p>
+<p>When searching the title index, though, I’d leave these words in the
+SRU search query for two reasons…</p>
 <ul>
-<li><p>It makes the title search phrase more readable, <em>especially</em> with non-english phrases.</p></li>
-<li><p>I have strong doubts that all of these words are elided. For example, a search for <em>Das Spiel ist aus</em>, yields results as if the search phrase were indeed <em>Das Spiel ist aus</em>, and not as if it were simply <em>Spiel</em>.</p></li>
+<li><p>It makes the title search phrase more readable,
+<em>especially</em> with non-english phrases.</p></li>
+<li><p>I have strong doubts that all of these words are elided. For
+example, a search for <em>Das Spiel ist aus</em>, yields results as if
+the search phrase were indeed <em>Das Spiel ist aus</em>, and not as if
+it were simply <em>Spiel</em>.</p></li>
 </ul>
 </div>
 <div id="holding_library-srw.li" class="section level3">
 <h3>$holding_library / srw.li</h3>
-<p>As shown in one of the examples above, the holding library search term is the official OCLC designator. You can search for an institution’s code by the institutions name <a href="https://www.oclc.org/en/contacts/libraries.html">using this link.</a></p>
+<p>As shown in one of the examples above, the holding library search
+term is the official OCLC designator. You can search for an
+institution’s code by the institutions name <a href="https://www.oclc.org/en/contacts/libraries.html">using this
+link.</a></p>
 </div>
 <div id="material_type-srw.mt" class="section level3">
 <h3>$material_type / srw.mt</h3>
-<p>An exhaustive crosswalk of all material types and their (normally 3-letter) codes would be too large to include here, but you can access the crosswalk in the documentation that is archived <a href="https://web.archive.org/web/20210426232556/https://help.oclc.org/Librarian_Toolbox/Searching_WorldCat_Indexes/Bibliographic_records/Material_Type_names_and_codes?sl=en%3E">at this link</a></p>
+<p>An exhaustive crosswalk of all material types and their (normally
+3-letter) codes would be too large to include here, but you can access
+the crosswalk in the documentation that is archived <a href="https://web.archive.org/web/20210426232556/https://help.oclc.org/Librarian_Toolbox/Searching_WorldCat_Indexes/Bibliographic_records/Material_Type_names_and_codes?sl=en%3E">at
+this link</a></p>
 </div>
 <div id="library_holdings_group-srw.cg" class="section level3">
 <h3>$library_holdings_group / srw.cg</h3>
-<p>The “library holdings group” search term is, perhaps, a confusing one. The table below is a crosswalk between the search codes to use in the SRU query, and what they mean.</p>
+<p>The “library holdings group” search term is, perhaps, a confusing
+one. The table below is a crosswalk between the search codes to use in
+the SRU query, and what they mean.</p>
 <table>
 <thead>
 <tr class="header">
@@ -702,33 +1057,89 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </tr>
 </tbody>
 </table>
-<p>So, for example, if you wanted to limit your search to items that are held by between 100 to 149 institutions, you would have to add <code>$library_holdings_group=18</code> to your SRU query.</p>
+<p>So, for example, if you wanted to limit your search to items that are
+held by between 100 to 149 institutions, you would have to add
+<code>$library_holdings_group=18</code> to your SRU query.</p>
 </div>
 <div id="others" class="section level3">
 <h3>others</h3>
-<p>For all the available search indexes, it is very helpful to know which exact MARC fields are searched in each one. <a href="https://web.archive.org/web/20130915101232/http://oclc.org/developer/documentation/worldcat-search-api/complete-list-indexes">This archived documentation link</a> contains that information.</p>
-<p>On that page, the SRU index codes have a prefix of <code>sru</code>, but it’s really <code>srw</code>. Consult the <em>Table of all available search indexes</em> above to find the libbib aliases for the indexes of interest (though, of course, you can use the un-translated index codes if you’d like, too).</p>
+<p>For all the available search indexes, it is very helpful to know
+which exact MARC fields are searched in each one. <a href="https://web.archive.org/web/20130915101232/http://oclc.org/developer/documentation/worldcat-search-api/complete-list-indexes">This
+archived documentation link</a> contains that information.</p>
+<p>On that page, the SRU index codes have a prefix of <code>sru</code>,
+but it’s really <code>srw</code>. Consult the <em>Table of all available
+search indexes</em> above to find the libbib aliases for the indexes of
+interest (though, of course, you can use the un-translated index codes
+if you’d like, too).</p>
 <hr />
 </div>
 </div>
 <div id="options-in-the-worldcat_api_search-function" class="section level2">
 <h2>Options in the <code>worldcat_api_search</code> function</h2>
-<p>Besides for, of course, the SRU query, the <code>worldcat_api_search</code> function takes a number of optional parameters that can be used to alter its semantics. Below is a list and explanation of each of those parameters. (This information is also available by running <code>help(&quot;worldcat_api_search&quot;)</code> in an R console after loading the <code>libbib</code> package.)</p>
+<p>Besides for, of course, the SRU query, the
+<code>worldcat_api_search</code> function takes a number of optional
+parameters that can be used to alter its semantics. Below is a list and
+explanation of each of those parameters. (This information is also
+available by running <code>help(&quot;worldcat_api_search&quot;)</code> in an R
+console after loading the <code>libbib</code> package.)</p>
 <ul>
-<li><p><strong>max_records</strong> The maximum number of search results to return. This must be a number between 0 and 100 or <code>Inf</code>. If <code>Inf</code>, the function will automatically make all follow-up requests to retrieve all search results. To limit the number of times the API is hit, the default is 10 search results.</p></li>
-<li><p><strong>sru_query_assist</strong> A logical (boolean) indicating whether translation from more human-readable aliases to the SRU search index codes should be allowed. The default is <code>TRUE</code>. It can also be set to <code>FALSE</code>. You can control this parameter globally by setting <code>options(&quot;libbib.sru_query_assist&quot;)</code>.</p></li>
-<li><p><strong>frbrGrouping</strong> FRBR (<em>Functional Requirements for Bibliographic Records</em>) is a conceptual framework for understanding the relationships between a “work” (e.g. a novel as planned by an author), its “expression” (e.g. the manuscript of that novel), it’s “manifestation” (e.g. the first published version of the novel), and, finally, an “item” (e.g an actual physical book [or microform; audio file; etc…] of the work). With the <code>frbrGrouping</code> parameter set to <code>on</code> (default), an attempt is made by the WorldCat API to group together similar editions and present only the top held record as the representative record for that group. This, conceptually, can be viewed as an attempt to return search results for any expression of the “work” (or works) referred to in the search query.</p></li>
-<li><p><strong>start_at</strong> The search result to start at (default is 1)</p></li>
-<li><p><strong>wskey</strong> A WorldCat API key. This function is easiest to use by setting the wskey globally, with the following incantation: <code>options(libbib.wskey=&quot;YOUR WSKEY GOES HERE&quot;)</code></p></li>
-<li><p><strong>more</strong> A logical indicating whether more information from the MARCXML search results should be returned (publisher, bib level, etc….). The default is <code>TRUE</code>.</p></li>
-<li><p><strong>print.progress</strong> A logical indicating whether a message should be displayed for each API request. If <code>max_records</code> is <code>Inf</code> a message will be displayed for every group of 100 search results the function fetches. The default is <code>TRUE</code>.</p></li>
-<li><p><strong>debug</strong> A logical indicating whether the HTTP and API responses should be printed (for debugging). The default is <code>FALSE</code>.</p></li>
+<li><p><strong>max_records</strong> The maximum number of search results
+to return. This must be a number between 0 and 100 or <code>Inf</code>.
+If <code>Inf</code>, the function will automatically make all follow-up
+requests to retrieve all search results. To limit the number of times
+the API is hit, the default is 10 search results.</p></li>
+<li><p><strong>sru_query_assist</strong> A logical (boolean) indicating
+whether translation from more human-readable aliases to the SRU search
+index codes should be allowed. The default is <code>TRUE</code>. It can
+also be set to <code>FALSE</code>. You can control this parameter
+globally by setting
+<code>options(&quot;libbib.sru_query_assist&quot;)</code>.</p></li>
+<li><p><strong>frbrGrouping</strong> FRBR (<em>Functional Requirements
+for Bibliographic Records</em>) is a conceptual framework for
+understanding the relationships between a “work” (e.g. a novel as
+planned by an author), its “expression” (e.g. the manuscript of that
+novel), it’s “manifestation” (e.g. the first published version of the
+novel), and, finally, an “item” (e.g an actual physical book [or
+microform; audio file; etc…] of the work). With the
+<code>frbrGrouping</code> parameter set to <code>on</code> (default), an
+attempt is made by the WorldCat API to group together similar editions
+and present only the top held record as the representative record for
+that group. This, conceptually, can be viewed as an attempt to return
+search results for any expression of the “work” (or works) referred to
+in the search query.</p></li>
+<li><p><strong>start_at</strong> The search result to start at (default
+is 1)</p></li>
+<li><p><strong>wskey</strong> A WorldCat API key. This function is
+easiest to use by setting the wskey globally, with the following
+incantation:
+<code>options(libbib.wskey=&quot;YOUR WSKEY GOES HERE&quot;)</code></p></li>
+<li><p><strong>more</strong> A logical indicating whether more
+information from the MARCXML search results should be returned
+(publisher, bib level, etc….). The default is
+<code>TRUE</code>.</p></li>
+<li><p><strong>print.progress</strong> A logical indicating whether a
+message should be displayed for each API request. If
+<code>max_records</code> is <code>Inf</code> a message will be displayed
+for every group of 100 search results the function fetches. The default
+is <code>TRUE</code>.</p></li>
+<li><p><strong>debug</strong> A logical indicating whether the HTTP and
+API responses should be printed (for debugging). The default is
+<code>FALSE</code>.</p></li>
 </ul>
 </div>
 <div id="combining-this-with-the-other-api-search-functions-in-libbib" class="section level2">
-<h2>Combining this with the other API search functions in <code>libbib</code></h2>
-<p>There are numerous ways to combine the <code>worldcat_api_search</code> with the other functions that <code>libbib</code> provides to do some really useful investigations. In the example below, will be using the <code>worldcat_api_search</code> and <code>worldcat_api_locations_by_oclc</code> functions to get a list of institutions that hold any edition of my textbook. (This example uses some <code>data.table</code> specific syntax for brevity, but it will work with base R [or “tidyverse”] translations just fine.)</p>
-<p>First, let’s use the search function to get a list of all search results for the book…</p>
+<h2>Combining this with the other API search functions in
+<code>libbib</code></h2>
+<p>There are numerous ways to combine the
+<code>worldcat_api_search</code> with the other functions that
+<code>libbib</code> provides to do some really useful investigations. In
+the example below, will be using the <code>worldcat_api_search</code>
+and <code>worldcat_api_locations_by_oclc</code> functions to get a list
+of institutions that hold any edition of my textbook. (This example uses
+some <code>data.table</code> specific syntax for brevity, but it will
+work with base R [or “tidyverse”] translations just fine.)</p>
+<p>First, let’s use the search function to get a list of all search
+results for the book…</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">worldcat_api_search</span>(<span class="st">&#39;srw.ti=&quot;Data Analysis with r&quot;</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="st">                                  and srw.au=fischetti&#39;</span>,</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                                <span class="at">max_records=</span><span class="cn">Inf</span>)</span>
@@ -750,19 +1161,28 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3: Fischetti, Tony.     2015</span></span>
 <span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4:  Fischetti, Tony     2015</span></span>
 <span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5:  Fischetti, Tony     2015</span></span></code></pre></div>
-<p>Now let’s get all the unique OCLC numbers from all the search results.</p>
+<p>Now let’s get all the unique OCLC numbers from all the search
+results.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>all_the_oclcs <span class="ot">&lt;-</span> results[, <span class="fu">unique</span>(oclc)]</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>all_the_oclcs</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] &quot;1005106045&quot; &quot;1089176194&quot; &quot;949229431&quot;  &quot;1242682069&quot; &quot;1242707288&quot;</span></span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [6] &quot;1244405806&quot; &quot;1104264768&quot; &quot;1242685020&quot; &quot;1242707684&quot; &quot;1244406814&quot;</span></span>
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [11] &quot;1104846312&quot;</span></span></code></pre></div>
-<p>On to the <code>worldcat_api_locations_by_oclc</code> function! Since this function takes one OCLC number at a time, we need to use a looping-construct to run the function with <em>all</em> the OCLC numbers in <code>all_the_oclcs</code>. We’ll be using the <code>pblapply</code> function (from the great <code>pbapply</code> package) to do this because we get a useful progress bar with no extra effort.</p>
+<p>On to the <code>worldcat_api_locations_by_oclc</code> function! Since
+this function takes one OCLC number at a time, we need to use a
+looping-construct to run the function with <em>all</em> the OCLC numbers
+in <code>all_the_oclcs</code>. We’ll be using the <code>pblapply</code>
+function (from the great <code>pbapply</code> package) to do this
+because we get a useful progress bar with no extra effort.</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>holds <span class="ot">&lt;-</span> <span class="fu">pblapply</span>(all_the_oclcs,</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>                  <span class="cf">function</span>(x){</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">worldcat_api_locations_by_oclc</span>(x,</span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>                      <span class="at">include.bib.info=</span><span class="cn">FALSE</span>)</span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>                    })</span></code></pre></div>
-<p>Since the <code>pblapply</code> function returns a list of <code>data.tables</code> (on for each OCLC), we’ll use <code>data.table</code>’s <code>rbindlist</code> function to one <code>data.table</code> containing all the results.</p>
+<p>Since the <code>pblapply</code> function returns a list of
+<code>data.tables</code> (on for each OCLC), we’ll use
+<code>data.table</code>’s <code>rbindlist</code> function to one
+<code>data.table</code> containing all the results.</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>all_holdings_dt <span class="ot">&lt;-</span> <span class="fu">rbindlist</span>(holds)</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>all_holdings_dt[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          oclc institution_identifier            institution_name copies</span></span>
@@ -785,9 +1205,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1031:                                           Cyberlibris</span></span>
 <span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1032:                                           Cyberlibris</span></span>
 <span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1033: Bibliothèque de l&#39;Université du Québec à Trois-Riv...</span></span></code></pre></div>
-<p>There you have it! My textbook is held by 1033 distinct OCLC institutions!</p>
-<p>Although the example above only searches the holding institutions of one specific book, the idiom is most helpful/interesting/cool when used for finding the holding institution of a entire class of materials.</p>
-<p>For example, in a recent project for a curator at my institution, I used the Search API to find all search results for materials on a very specific topic, got all the holding institutions for each of the search results, and then aggregated the institutions (with this package’s <code>dt_counts_and_percents</code> function) to find the institutions holding the most items on this particular (very specific) topic.</p>
+<p>There you have it! My textbook is held by 1033 distinct OCLC
+institutions!</p>
+<p>Although the example above only searches the holding institutions of
+one specific book, the idiom is most helpful/interesting/cool when used
+for finding the holding institution of a entire class of materials.</p>
+<p>For example, in a recent project for a curator at my institution, I
+used the Search API to find all search results for materials on a very
+specific topic, got all the holding institutions for each of the search
+results, and then aggregated the institutions (with this package’s
+<code>dt_counts_and_percents</code> function) to find the institutions
+holding the most items on this particular (very specific) topic.</p>
 <hr />
 </div>
 <div id="sundry-external-archived-documentation-links" class="section level2">
@@ -795,51 +1223,82 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li><p><strong>WorldCat Search API current documentation</strong></p>
 <p><em>scroll to SRU</em></p>
-<p>Current documentation on the (SRU) WorldCat Search API call. Contains all index names and codes, parameters available, and the meaning of API status code return numbers</p>
+<p>Current documentation on the (SRU) WorldCat Search API call. Contains
+all index names and codes, parameters available, and the meaning of API
+status code return numbers</p>
 <p><a href="https://developer.api.oclc.org/wcv1" class="uri">https://developer.api.oclc.org/wcv1</a></p></li>
-<li><p><strong>WorldCat Search API &gt; Using the API &gt; Request Types &gt; SRU</strong></p>
+<li><p><strong>WorldCat Search API &gt; Using the API &gt; Request Types
+&gt; SRU</strong></p>
 <p><em>(archived OCLC documentation link from 2013)</em></p>
-<p>Examples of simple SRU requests and explanation of <code>frbrGrouping</code> and <code>servicelevel</code> parameters</p>
+<p>Examples of simple SRU requests and explanation of
+<code>frbrGrouping</code> and <code>servicelevel</code> parameters</p>
 <p><a href="https://web.archive.org/web/20130915101249/http://oclc.org/developer/documentation/worldcat-search-api/sru" class="uri">https://web.archive.org/web/20130915101249/http://oclc.org/developer/documentation/worldcat-search-api/sru</a></p></li>
 <li><p><strong>WorldCat Search API &gt; Indexes</strong></p>
 <p><em>(archived OCLC documentation link from 2013)</em></p>
-<p>Explation of relations operators, boolean operators, title index stop-words (removed words), the MARC subfields search by (only) the subject index, and explation of the wildcard characters <code>*</code>; <code>#</code>; and <code>?</code>.</p>
+<p>Explation of relations operators, boolean operators, title index
+stop-words (removed words), the MARC subfields search by (only) the
+subject index, and explation of the wildcard characters <code>*</code>;
+<code>#</code>; and <code>?</code>.</p>
 <p><a href="https://web.archive.org/web/20130530034745/http://oclc.org/developer/documentation/worldcat-search-api/indexes" class="uri">https://web.archive.org/web/20130530034745/http://oclc.org/developer/documentation/worldcat-search-api/indexes</a></p></li>
-<li><p><strong>WorldCat Search API &gt; Indexes &gt; Complete List of Indexes</strong></p>
+<li><p><strong>WorldCat Search API &gt; Indexes &gt; Complete List of
+Indexes</strong></p>
 <p><em>(archived OCLC documentation link from 2013)</em></p>
-<p>Explation of relations operators and a complete list of all indexes, their respective SRU index code, the relations available for use with each, and the MARC fields search for each index. Here, the SRU index codes have a prefix of <code>sru</code>, but it’s really <code>srw</code>.</p>
+<p>Explation of relations operators and a complete list of all indexes,
+their respective SRU index code, the relations available for use with
+each, and the MARC fields search for each index. Here, the SRU index
+codes have a prefix of <code>sru</code>, but it’s really
+<code>srw</code>.</p>
 <p><a href="https://web.archive.org/web/20130915101232/http://oclc.org/developer/documentation/worldcat-search-api/complete-list-indexes" class="uri">https://web.archive.org/web/20130915101232/http://oclc.org/developer/documentation/worldcat-search-api/complete-list-indexes</a></p></li>
 <li><p><strong>Material Types Names and Codes</strong></p>
 <p>A complete list of Material Types you can search for, their codes</p>
-<p>For use with the <code>srw.mt</code>/<code>$material_type</code> index.</p>
-<p><a href="https://help.oclc.org/Librarian_Toolbox/Searching_WorldCat_Indexes/Bibliographic_records/Material_Type_names_and_codes?sl=en">Material Type names and codes - OCLC Support</a></p>
-<p><a href="https://web.archive.org/web/20210425140401/https://help.oclc.org/Librarian_Toolbox/Searching_WorldCat_Indexes/Bibliographic_records/Material_Type_names_and_codes?sl=en%3E">Archived from original for posterity</a></p></li>
-<li><p><strong>WorldCat Search API &gt; Indexes &gt; Tips for specific indexes</strong></p>
+<p>For use with the <code>srw.mt</code>/<code>$material_type</code>
+index.</p>
+<p><a href="https://help.oclc.org/Librarian_Toolbox/Searching_WorldCat_Indexes/Bibliographic_records/Material_Type_names_and_codes?sl=en">Material
+Type names and codes - OCLC Support</a></p>
+<p><a href="https://web.archive.org/web/20210425140401/https://help.oclc.org/Librarian_Toolbox/Searching_WorldCat_Indexes/Bibliographic_records/Material_Type_names_and_codes?sl=en%3E">Archived
+from original for posterity</a></p></li>
+<li><p><strong>WorldCat Search API &gt; Indexes &gt; Tips for specific
+indexes</strong></p>
 <p><em>(archived OCLC documentation link from 2013)</em></p>
-<p>Contains a lot of very helpful information about some of the different search indexes, the stop words they use, normalization rules, and a very helpful cross-walk on the “Number of Holding Libraries” index.</p>
+<p>Contains a lot of very helpful information about some of the
+different search indexes, the stop words they use, normalization rules,
+and a very helpful cross-walk on the “Number of Holding Libraries”
+index.</p>
 <p><a href="https://web.archive.org/web/20120311003221/http://oclc.org/developer/documentation/worldcat-search-api/tips-specific-indexes" class="uri">https://web.archive.org/web/20120311003221/http://oclc.org/developer/documentation/worldcat-search-api/tips-specific-indexes</a></p></li>
-<li><p><strong>WorldCat Search API &gt; Using the API &gt; Parameters</strong></p>
+<li><p><strong>WorldCat Search API &gt; Using the API &gt;
+Parameters</strong></p>
 <p><em>(archived OCLC documentation link from 2013)</em></p>
-<p>Helpful information about what the different SRU search parameters mean. Remember that the parameters of the <code>worldcat_api_search</code> function (a) only contain a subset of these, and (b) may have slightly different names <a href="https://web.archive.org/web/20121101034843/http://oclc.org/developer/documentation/worldcat-search-api/parameters" class="uri">https://web.archive.org/web/20121101034843/http://oclc.org/developer/documentation/worldcat-search-api/parameters</a></p></li>
+<p>Helpful information about what the different SRU search parameters
+mean. Remember that the parameters of the
+<code>worldcat_api_search</code> function (a) only contain a subset of
+these, and (b) may have slightly different names <a href="https://web.archive.org/web/20121101034843/http://oclc.org/developer/documentation/worldcat-search-api/parameters" class="uri">https://web.archive.org/web/20121101034843/http://oclc.org/developer/documentation/worldcat-search-api/parameters</a></p></li>
 <li><p><strong>Finding Institution Codes</strong></p>
-<p>A search box for searching institution names and returning instituion codes suitable for use in the holding institution search index.</p>
+<p>A search box for searching institution names and returning instituion
+codes suitable for use in the holding institution search index.</p>
 <p><a href="https://www.oclc.org/en/contacts/libraries.html" class="uri">https://www.oclc.org/en/contacts/libraries.html</a></p></li>
 <li><p><strong>Searching WorldCat Indexes</strong></p>
 <p><em>(archived OCLC documentation link from 2012)</em></p>
-<p>Information about search indexes that are largely available in the above links. Not related to the (SRU) Search API but could be helpful, anyway.</p>
+<p>Information about search indexes that are largely available in the
+above links. Not related to the (SRU) Search API but could be helpful,
+anyway.</p>
 <p><a href="https://web.archive.org/web/20120509072600/http://www.oclc.org/us/en/support/documentation/worldcat/searching/searchworldcatindexes/default.htm" class="uri">https://web.archive.org/web/20120509072600/http://www.oclc.org/us/en/support/documentation/worldcat/searching/searchworldcatindexes/default.htm</a></p></li>
 <li><p><strong>CQL specification</strong></p>
-<p>Helpful information about CQL query syntax. Not all is applicable to the WorldCat Search API that is discussed here.</p>
+<p>Helpful information about CQL query syntax. Not all is applicable to
+the WorldCat Search API that is discussed here.</p>
 <p><a href="https://www.loc.gov/standards/sru/cql/spec.html" class="uri">https://www.loc.gov/standards/sru/cql/spec.html</a></p></li>
 <li><p><strong>Searching WorldCat Indexes</strong></p>
-<p>Current page with links containing a lot of information about wielding WorldCat searches. Not all information is application to the WorldCat Search API that is discussed here, and most of the most helpful information is already covered in the links above.</p>
+<p>Current page with links containing a lot of information about
+wielding WorldCat searches. Not all information is application to the
+WorldCat Search API that is discussed here, and most of the most helpful
+information is already covered in the links above.</p>
 <p><a href="https://help.oclc.org/Librarian_Toolbox/Searching_WorldCat_Indexes" class="uri">https://help.oclc.org/Librarian_Toolbox/Searching_WorldCat_Indexes</a></p></li>
 </ul>
 </div>
 <div id="similar-projects-code" class="section level2">
 <h2>Similar projects / code</h2>
 <ul>
-<li><p><strong>A Ruby Gem to communicate with the WorldCat Search API</strong></p>
+<li><p><strong>A Ruby Gem to communicate with the WorldCat Search
+API</strong></p>
 <p><a href="https://github.com/vivien/worldcat" class="uri">https://github.com/vivien/worldcat</a></p></li>
 <li><p><strong>Python scripts using the WorldCat search API</strong></p>
 <p><a href="https://github.com/ysugiyama3/worldcat-search-api" class="uri">https://github.com/ysugiyama3/worldcat-search-api</a></p></li>
@@ -848,9 +1307,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="papersarticles" class="section level2">
 <h2>Papers/Articles</h2>
 <ul>
-<li><p><strong>Using the WorldCat API to Develop Data-Driven Decision-Making for Gifts-in-Kind</strong></p>
+<li><p><strong>Using the WorldCat API to Develop Data-Driven
+Decision-Making for Gifts-in-Kind</strong></p>
 <p><a href="https://journals.ala.org/index.php/lrts/article/view/7074/9638" class="uri">https://journals.ala.org/index.php/lrts/article/view/7074/9638</a></p></li>
-<li><p><strong>Destroyer and Preserver, Hear, Oh Hear! Not All Uncirculated Books Must Chariotest to a Dark Wintry Bed: How We Used the Books Must Chariotest to a Dark Wintry Bed: How We Used the OCLC WorldCat Search API to Inform Our Weeding Decisions with OCLC WorldCat Search API to Inform Our Weeding Decisions with Holdings Data Holdings Data</strong></p>
+<li><p><strong>Destroyer and Preserver, Hear, Oh Hear! Not All
+Uncirculated Books Must Chariotest to a Dark Wintry Bed: How We Used the
+Books Must Chariotest to a Dark Wintry Bed: How We Used the OCLC
+WorldCat Search API to Inform Our Weeding Decisions with OCLC WorldCat
+Search API to Inform Our Weeding Decisions with Holdings Data Holdings
+Data</strong></p>
 <p><a href="https://docs.lib.purdue.edu/cgi/viewcontent.cgi?article=2026&amp;context=charleston" class="uri">https://docs.lib.purdue.edu/cgi/viewcontent.cgi?article=2026&amp;context=charleston</a></p></li>
 </ul>
 </div>

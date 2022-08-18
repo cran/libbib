@@ -3,6 +3,10 @@
 [latest news on GitHub](https://github.com/NYPL/libbib/blob/master/NEWS.md)
 where the formatting is better.**
 
+# libbib 1.7 (in development)
+
+1. Nothing yet
+
 # libbib 1.6.2
 
 ## new features
@@ -14,8 +18,8 @@ where the formatting is better.**
 
 ## bug fixes
 
-1. Leading whitespaces would confuse the lc call number functions.
-   Now they handle leading/trailing whitespace just fine
+1. LC call number functions now call str_trim before anything
+
 
 # libbib 1.6
 
