@@ -1,6 +1,6 @@
-428aaca1a09fe76210491bf6bafd7379 *DESCRIPTION
+12beee9a44b39f6caff40127de6958f6 *DESCRIPTION
 bba0d6b672c9b17605bba253fd555cd3 *NAMESPACE
-92984ccba08fb30c36e76fe75eb8d988 *NEWS.md
+da500f14636a6ed489ef5b1de282f388 *NEWS.md
 cfee63d2735c1bf838530d8790f187d3 *R/bibcodes.R
 9059173c51dc7456d74039790aa41f4b *R/books_serials_etc_sample_data.R
 58cf452992f812c2e88fda5ff23dab07 *R/call-numbers-and-subject.R
@@ -14,7 +14,7 @@ c42796a2005aed3a81e2a4702fa0288a *R/language_code_crosswalk-data.R
 2dac6f96f11abcfaf186b6f359072393 *R/special-attributes.R
 20e548a262130fd0a974f32dcc52fed6 *R/split-map-filter-reduce.R
 b5c823a8107ff6b4dd83f099e3fd3df8 *R/the-web.R
-630ce386aabf3e4aa60fef10f3e6ef62 *R/utilities.R
+8fa494dc8de93112a9a89d43bef1ac8f *R/utilities.R
 44ecb4e70730b7e9454c9c0d3a3f879d *R/worldcat-api.R
 4495de3903683c2eee1978fca58fe9ca *README.md
 b810f21565759998e42d4daf3edefc5a *build/vignette.rds
@@ -26,7 +26,7 @@ d2a0ab16cab314322e06518f87c27dab *data/dewey_subject_crosswalk.rda
 0a634c27b0fc66b167bf0f87b2756bb3 *data/lc_subject_subclassification.rda
 2f20788c4d41818a102569f283ab83f6 *inst/doc/using-the-worldcat-search-api.R
 dd1baa2433976b27cd3c723d85269050 *inst/doc/using-the-worldcat-search-api.Rmd
-057db7402a92394be5b7d6c73a73d592 *inst/doc/using-the-worldcat-search-api.html
+41e72916944f608961190ff71984c55f *inst/doc/using-the-worldcat-search-api.html
 3f9ee50c5cf0d0acc9ba161d28b614ec *man/books_serials_etc_sample.Rd
 8c09b296614cf9bfc0fdd56b157fbfba *man/car.Rd
 a673277173ed99df8b8493d07a96d7f8 *man/check_isbn_10_check_digit.Rd
@@ -37,7 +37,7 @@ d2757775eef6a4962b41a30af4ebb4fd *man/convert_to_isbn_13.Rd
 01648bf82e174f38066bfa382df4c6a5 *man/cp_lb_attributes.Rd
 699c19188a00f7827e67a00892bf7e84 *man/dewey_subject_crosswalk.Rd
 fd111c75086be179a8a394165279d14c *man/dt_add_to_col_names.Rd
-a18f04f5bf17965d8f4752295179fd01 *man/dt_counts_and_percents.Rd
+f979b6b6cdd5eac9ba13c6868ea62c0d *man/dt_counts_and_percents.Rd
 8fe6f33cb16a14353af5d432d8c7025a *man/dt_del_cols.Rd
 296f2e3a1c177f9986b57e8bd6108c2f *man/dt_keep_cols.Rd
 4e3f55dacd41d2d6fb6e33d0ea1aedad *man/dt_na_breakdown.Rd
@@ -92,6 +92,6 @@ f489644bb9e50e032fb466417f00a3c7 *tests/testthat/test-marc-field-deconstruction.
 9c296227963d05686f1cc0825f09d3d1 *tests/testthat/test-other-code-translations.R
 75564f2ccf96c95ebbf049065e2c6c00 *tests/testthat/test-split-map-filter-reduce.R
 402e886206b57f5055ef1c117a140021 *tests/testthat/test-the-web.R
-3f7ffa21bf8d549c4f958857b1c200b3 *tests/testthat/test-utilities.R
+9bae587857ebf406ff80af70f79f50de *tests/testthat/test-utilities.R
 d82c81a540f77b69cb8e4aa9a316309b *tests/testthat/test-worldcat-api.R
 dd1baa2433976b27cd3c723d85269050 *vignettes/using-the-worldcat-search-api.Rmd
